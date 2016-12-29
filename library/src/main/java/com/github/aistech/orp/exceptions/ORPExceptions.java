@@ -7,7 +7,7 @@ import android.os.Build;
  * Created by Jonathan Nobre Ferreira on 09/12/16.
  */
 
-public class ORPExceptions extends Exception {
+public class ORPExceptions extends RuntimeException {
 
     public ORPExceptions() {
     }

@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.view.View;
 import android.widget.Toast;
 
+import com.github.aistech.orp.ORP;
 import com.github.aistech.orp.activities.ORPActivity;
 import com.github.aistech.orp.annotations.DestinationExtraObject;
 import com.github.aistech.orp.builder.ORPBuilder;
@@ -14,16 +15,17 @@ import example.orp.model.User;
 
 public class MainActivity extends ORPActivity {
 
-    private User user1;
+    User user1;
 
     // Set the parameter name is optional
-    @DestinationExtraObject()
-    private User cortana;
+    @DestinationExtraObject
+    User cortana;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, this);
         setContentView(R.layout.activity_main);
+        ORP.tryToBind(this);
 
         // Look, at First the user name is Master Chief
         this.user1 = new User("Master Chief", 117);

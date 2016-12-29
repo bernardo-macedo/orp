@@ -5,7 +5,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
+import com.github.aistech.orp.ORP;
 import com.github.aistech.orp.annotations.DestinationExtraObject;
 import com.github.aistech.orp.exceptions.ORPExceptions;
 import com.github.aistech.orp.singletons.ORPSingleton;
@@ -69,26 +73,7 @@ public class ORPActivity extends AppCompatActivity {
      * @param orpActivity
      */
     public static void parseParameters(ORPActivity orpActivity) {
-        for (Field field : orpActivity.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            if (field.isAnnotationPresent(DestinationExtraObject.class)) {
-                try {
-                    DestinationExtraObject destinationExtraObject = field.getAnnotation(DestinationExtraObject.class);
-                    String parameterKey = field.getName();
-                    if (!destinationExtraObject.value().isEmpty()) {
-                        parameterKey = destinationExtraObject.value();
-                    }
-                    Object object = ORPSingleton.getInstance().getParametersForOriginActivity(orpActivity.getActivityCallerHashCode(), parameterKey);
-                    field.set(orpActivity, object);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (ORPExceptions orpExceptions) {
-                    orpExceptions.printStackTrace();
-                }
-            } else {
-
-            }
-        }
+//        ORP.bind(orpActivity);
     }
 
     /* getters and Setters */

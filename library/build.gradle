@@ -2,6 +2,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.aistech'
 
+targetCompatibility = JavaVersion.VERSION_1_7
+sourceCompatibility = JavaVersion.VERSION_1_7
+
 android {
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
@@ -59,6 +62,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
+    compile project(':orp-annotations')
     testCompile 'junit:junit:4.12'
 }
 

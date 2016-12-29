@@ -59,6 +59,8 @@ public final class ORPSingleton {
      * @return
      */
     public Object getParametersForOriginActivity(Integer activityHashCode, String parameterKey) throws ORPExceptions {
+        System.out.println(parametersMap.toString());
+
         Map<String, Object> parameters = this.parametersMap.get(activityHashCode);
         if (parameters != null && parameters.containsKey(parameterKey)) {
             return parameters.get(parameterKey);
