@@ -73,7 +73,7 @@ public class ORPActivity extends AppCompatActivity {
      * @param orpActivity
      */
     public static void parseParameters(ORPActivity orpActivity) {
-//        ORP.bind(orpActivity);
+        ORP.tryToBind(orpActivity);
     }
 
     /* getters and Setters */

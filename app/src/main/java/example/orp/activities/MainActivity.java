@@ -25,7 +25,6 @@ public class MainActivity extends ORPActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState, this);
         setContentView(R.layout.activity_main);
-        ORP.tryToBind(this);
 
         // Look, at First the user name is Master Chief
         this.user1 = new User("Master Chief", 117);

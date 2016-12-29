@@ -63,6 +63,7 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile project(':orp-annotations')
+    annotationProcessor project(':processor')
     testCompile 'junit:junit:4.12'
 }
 

@@ -25,7 +25,6 @@ public class Main2Activity extends ORPActivity {
         // Need to call this in order to load the parameters
         super.onCreate(savedInstanceState, this);
         setContentView(R.layout.activity_main2);
-        ORP.tryToBind(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
