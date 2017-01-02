@@ -21,37 +21,37 @@ import java.util.Map;
 public class ORP {
 
     private static final String TAG = "ORP";
-    static final Map<Class<?>, Constructor<?>> BINDINGS = new LinkedHashMap<>();
+    static final Map<Class<?>, Constructor<? extends Unbinder>> BINDINGS = new LinkedHashMap<>();
 
     @NonNull
     @UiThread
-    public static void tryToBind(@NonNull Activity target) {
+    public static Unbinder tryToBind(@NonNull Activity target) {
         try {
-            bind(target);
+            return bind(target);
         } catch (ORPExceptions e) {
             Log.e(TAG, e.getMessage(), e);
         }
+        return Unbinder.EMPTY;
     }
 
     @NonNull
     @UiThread
-    public static void bind(@NonNull Activity target) {
-        View sourceView = target.getWindow().getDecorView();
-        createBinding(target, sourceView);
+    public static Unbinder bind(@NonNull Activity target) {
+        return createBinding(target);
     }
 
-    private static void createBinding(@NonNull Object target, @NonNull View source) {
+    private static Unbinder createBinding(@NonNull Object target) {
         Class<?> targetClass = target.getClass();
         Log.d(TAG, "Looking up binding for " + targetClass.getName());
-        Constructor<?> constructor = findBindingConstructorForClass(targetClass);
+        Constructor<? extends Unbinder> constructor = findBindingConstructorForClass(targetClass);
 
         if (constructor == null) {
-            return;
+            return Unbinder.EMPTY;
         }
 
         //noinspection TryWithIdenticalCatches Resolves to API 19+ only type.
         try {
-            constructor.newInstance(target, source);
+            return constructor.newInstance(target);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Unable to invoke " + constructor, e);
         } catch (InstantiationException e) {
@@ -71,8 +71,8 @@ public class ORP {
     @Nullable
     @CheckResult
     @UiThread
-    private static Constructor findBindingConstructorForClass(Class<?> cls) {
-        Constructor bindingCtor = BINDINGS.get(cls);
+    private static Constructor<? extends Unbinder> findBindingConstructorForClass(Class<?> cls) {
+        Constructor<? extends Unbinder> bindingCtor = BINDINGS.get(cls);
         if (bindingCtor != null) {
             Log.d(TAG, "HIT: Cached in binding map.");
             return bindingCtor;
@@ -85,7 +85,7 @@ public class ORP {
         try {
             Class<?> bindingClass = Class.forName(clsName + "_ORPBinding");
             //noinspection unchecked
-            bindingCtor = (Constructor) bindingClass.getConstructor(cls, Object.class);
+            bindingCtor = (Constructor) bindingClass.getConstructor(cls);
             Log.d(TAG, "HIT: Loaded binding class and constructor.");
         } catch (ClassNotFoundException e) {
             Log.d(TAG, "Not found. Trying superclass " + cls.getSuperclass().getName());

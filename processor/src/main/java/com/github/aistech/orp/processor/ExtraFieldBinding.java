@@ -7,23 +7,17 @@ import com.squareup.javapoet.TypeName;
 final class ExtraFieldBinding implements MemberViewBinding {
   private final String value;
   private final TypeName type;
-  private final boolean required;
 
-  ExtraFieldBinding(String value, TypeName type, boolean required) {
+  ExtraFieldBinding(String value, TypeName type) {
     this.value = value;
     this.type = type;
-    this.required = required;
   }
 
-  public String getValue() {
+  String getValue() {
     return value;
   }
 
-  public TypeName getType() {
-    return type;
-  }
-
-  public ClassName getRawType() {
+  ClassName getRawType() {
     if (type instanceof ParameterizedTypeName) {
       return ((ParameterizedTypeName) type).rawType; // List<String> -> return List;
     }
@@ -34,7 +28,4 @@ final class ExtraFieldBinding implements MemberViewBinding {
     return "field '" + value + "'";
   }
 
-  public boolean isRequired() {
-    return required;
-  }
 }

@@ -28,7 +28,7 @@ final class Binding {
 
     public List<MemberViewBinding> getRequiredBindings() {
         List<MemberViewBinding> requiredBindings = new ArrayList<>();
-        if (fieldBinding != null && fieldBinding.isRequired()) {
+        if (fieldBinding != null) {
             requiredBindings.add(fieldBinding);
         }
         return requiredBindings;

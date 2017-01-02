@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.github.aistech.orp.ORP;
+import com.github.aistech.orp.Unbinder;
 import com.github.aistech.orp.annotations.DestinationExtraObject;
 import com.github.aistech.orp.exceptions.ORPExceptions;
 import com.github.aistech.orp.singletons.ORPSingleton;
@@ -28,6 +29,7 @@ public class ORPActivity extends AppCompatActivity {
     public static final String HASH_CODE_EXTRA = ORPActivity.class.getName().concat("originActivityHashCode");
 
     private Integer activityCallerHashCode;
+    private Unbinder unbinder;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +55,11 @@ public class ORPActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
+
         /*
             As soon as this activity is destroyed, we remove the extras parameters from the singleton
             that was sent to this one, because it won't need anymore.
@@ -72,8 +79,8 @@ public class ORPActivity extends AppCompatActivity {
      *
      * @param orpActivity
      */
-    public static void parseParameters(ORPActivity orpActivity) {
-        ORP.tryToBind(orpActivity);
+    public void parseParameters(ORPActivity orpActivity) {
+        unbinder = ORP.tryToBind(orpActivity);
     }
 
     /* getters and Setters */

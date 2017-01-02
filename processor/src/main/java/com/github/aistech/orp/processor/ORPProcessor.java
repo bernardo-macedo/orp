@@ -221,12 +221,6 @@ public final class ORPProcessor extends AbstractProcessor {
             error(element, "@%s must be a field (%s.%s)",
                     DestinationExtraObject.class.getSimpleName(), parentElement.getQualifiedName(),
                     element.getSimpleName());
-            hasError = true;
-        }
-        TypeMirror elementType = element.asType();
-        if (elementType.getKind() == TypeKind.TYPEVAR) {
-            TypeVariable typeVariable = (TypeVariable) elementType;
-            elementType = typeVariable.getUpperBound();
         }
 
         if (hasError) {
@@ -239,17 +233,25 @@ public final class ORPProcessor extends AbstractProcessor {
         BindingSet.Builder builder = getOrCreateBindingBuilder(builderMap, parentElement);
 
         String name = element.getSimpleName().toString();
-        TypeName type = TypeName.get(elementType);
-        boolean required = isFieldRequired(element);
+        TypeName type = TypeName.get(getElementType(element));
 
         if ("".equals(value)) {
             value = name;
         }
 
-        builder.addField(name, value, new ExtraFieldBinding(value, type, required));
+        builder.addField(name, value, new ExtraFieldBinding(value, type));
 
         // Add the type-erased version to the valid binding targets set.
         erasedTargetNames.add(parentElement);
+    }
+
+    private TypeMirror getElementType(Element element) {
+        TypeMirror elementType = element.asType();
+        if (elementType.getKind() == TypeKind.TYPEVAR) {
+            TypeVariable typeVariable = (TypeVariable) elementType;
+            elementType = typeVariable.getUpperBound();
+        }
+        return elementType;
     }
 
     private BindingSet.Builder getOrCreateBindingBuilder(
@@ -288,30 +290,12 @@ public final class ORPProcessor extends AbstractProcessor {
         printMessage(Kind.ERROR, element, message, args);
     }
 
-    private void note(Element element, String message, Object... args) {
-        printMessage(Kind.NOTE, element, message, args);
-    }
-
     private void printMessage(Kind kind, Element element, String message, Object[] args) {
         if (args.length > 0) {
             message = String.format(message, args);
         }
 
         processingEnv.getMessager().printMessage(kind, message, element);
-    }
-
-    private static boolean hasAnnotationWithName(Element element, String simpleName) {
-        for (AnnotationMirror mirror : element.getAnnotationMirrors()) {
-            String annotationName = mirror.getAnnotationType().asElement().getSimpleName().toString();
-            if (simpleName.equals(annotationName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean isFieldRequired(Element element) {
-        return !hasAnnotationWithName(element, NULLABLE_ANNOTATION_NAME);
     }
 
 }

@@ -99,8 +99,6 @@ final class BindingSet {
                 .addAnnotation(UI_THREAD)
                 .addModifiers(PUBLIC)
                 .addParameter(targetType, "target")
-                .addParameter(OBJECT, "source")
-                .addStatement(("this(target, source.getContext())"))
                 .build();
     }
 
@@ -111,19 +109,9 @@ final class BindingSet {
 
         constructor.addParameter(targetType, "target");
 
-        if (constructorNeedsView()) {
-            constructor.addParameter(OBJECT, "source");
-        } else {
-            constructor.addParameter(CONTEXT, "context");
-        }
-
         if (parentBinding != null) {
             if (parentBinding.constructorNeedsView()) {
-                constructor.addStatement("super(target, source)");
-            } else if (constructorNeedsView()) {
-                constructor.addStatement("super(target, source.getContext())");
-            } else {
-                constructor.addStatement("super(target, context)");
+                constructor.addStatement("super(target)");
             }
             constructor.addCode("\n");
         }
@@ -178,34 +166,6 @@ final class BindingSet {
 
 
     private void addViewBinding(MethodSpec.Builder result, Binding binding) {
-//        if (binding.isSingleFieldBinding()) {
-//            // Optimize the common case where there's a single binding directly to a field.
-//            ExtraFieldBinding fieldBinding = binding.getFieldBinding();
-//            CodeBlock.Builder builder = CodeBlock.builder()
-//                    .add("target.$L = ", fieldBinding.getValue());
-//
-//            boolean requiresCast = requiresCast(fieldBinding.getType());
-//            if (!requiresCast && !fieldBinding.isRequired()) {
-//                builder.add("source.findViewById($L)", binding.getValue());
-//            } else {
-//                builder.add("$T.find", UTILS);
-//                builder.add(fieldBinding.isRequired() ? "RequiredView" : "OptionalView");
-//                if (requiresCast) {
-//                    builder.add("AsType");
-//                }
-//                builder.add("(source, $L", binding.getValue());
-//                if (fieldBinding.isRequired() || requiresCast) {
-//                    builder.add(", $S", asHumanDescription(singletonList(fieldBinding)));
-//                }
-//                if (requiresCast) {
-//                    builder.add(", $T.class", fieldBinding.getRawType());
-//                }
-//                builder.add(")");
-//            }
-//            result.addStatement("$L", builder.build());
-//            return;
-//        }
-
         List<MemberViewBinding> requiredBindings = binding.getRequiredBindings();
         if (requiredBindings.isEmpty()) {
             result.addStatement("object = ($L) singleton.getParametersForOriginActivity(target.hashCode(), $S)",
